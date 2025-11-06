@@ -6,17 +6,162 @@
     <title>ใบงานที่ 1.1 เรื่อง เหตุการณ์สำคัญตามลำดับกาลเวลา</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet"> <style>
+        /* NEW: Custom Color Palette based on SKR-DLP inspiration */
+        :root {
+            --primary-color: #2C7A7B; /* Dark Teal (main accent) */
+            --secondary-color: #4FD1C5; /* Light Teal (for highlights/borders) */
+            --background-color: #F7FAFC; /* Light Grayish White */
+            --card-color: #FFFFFF; /* White */
+            --text-color: #2D3748; /* Dark Gray (for main text) */
+            --light-text-color: #4A5568; /* Slightly lighter gray */
+            --accent-green: #38A169; /* A distinct green for success/positive */
+            --alert-yellow: #F6E05E; /* Yellow for alerts */
+            --error-red: #E53E3E; /* Red for errors */
+        }
+
+        body {
+            font-family: 'Sarabun', sans-serif; /* Use Sarabun as primary font */
+            background-color: var(--background-color);
+            color: var(--text-color);
+            padding: 20px;
+            margin: 0;
+        }
+
         .page { display: none; }
         .page.active { display: block; }
         textarea { min-height: 100px; }
-        /* NEW: Styles for the print/image-ready version */
-        /* เพิ่มสไตล์สำหรับตอนที่จะบันทึกภาพโดยเฉพาะ */        
+
+        /* General styles for consistent look */
+        .container-base {
+            background-color: var(--card-color);
+            padding: 2rem;
+            border-radius: 0.75rem; /* rounded-xl */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08); /* Soft shadow */
+            max-width: 48rem; /* max-w-3xl */
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Step Indicator */
+        .step-indicator {
+            background-color: #E2E8F0; /* Light gray for inactive */
+            color: var(--light-text-color);
+            transition: all 0.3s ease;
+            border-radius: 0.5rem;
+        }
+        .step-indicator.active-step {
+            background-color: var(--primary-color);
+            color: var(--card-color);
+        }
+
+        /* Buttons */
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: bold;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        .btn-primary:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-success {
+            background-color: var(--accent-green);
+            color: white;
+            font-weight: bold;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        .btn-success:hover {
+            background-color: #2F855A;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-danger {
+            background-color: var(--error-red);
+            color: white;
+            font-weight: bold;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        .btn-danger:hover {
+            background-color: #C53030;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Form Inputs */
+        input[type="text"], input[type="number"], textarea, select {
+            border: 1px solid #CBD5E0; /* Light gray border */
+            background-color: #EDF2F7; /* Very light gray background */
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            outline: none;
+            font-family: inherit;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        input[type="text"]:focus, input[type="number"]:focus, textarea:focus, select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(44, 122, 123, 0.2); /* Focus ring */
+            background-color: var(--card-color);
+        }
+        .invalid\:border-red-500:invalid {
+            border-color: var(--error-red);
+        }
+
+        /* Alert Box */
+        .alert-box {
+            background-color: var(--alert-yellow);
+            border-left: 4px solid #D69E2E; /* Darker yellow border */
+            padding: 1rem;
+            border-radius: 0.5rem;
+            color: #975A16; /* Dark brown text */
+            font-weight: 600;
+        }
+
+        /* Summary Score */
+        .score-box {
+            background-color: #FEEBC8; /* Light orange */
+            color: #975A16; /* Dark brown */
+            text-align: center;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+        }
+        .score-box .score-value {
+            font-size: 3.5rem;
+            font-weight: bold;
+            color: #D69E2E; /* Golden brown */
+        }
+
+        /* NEW: Styles for the print/image-ready version */        
         .ready-for-capture {            
             width: 1000px !important;            
             padding: 50px !important;            
-            box-shadow: none !important; /* ลบเงาออกเพื่อภาพที่สะอาด */
-            /* เพิ่มความจัดเรียงข้อความให้ดีขึ้นเมื่อเป็น 1000px */
+            box-shadow: none !important; 
             text-align: left !important;
         }
         /* ปรับขนาด font เล็กน้อยในส่วนสรุปเวลาอยู่ในโหมด ready-for-capture */
@@ -28,95 +173,111 @@
             font-size: 0.9em; /* ลดขนาด font ลงเล็กน้อย */
         }
         .ready-for-capture .summary-info-wrapper {
-            justify-content: flex-start; /* จัดชิดซ้ายเมื่อกว้างขึ้น */
-            gap: 20px;
+            display: flex; /* Ensure flex for correct alignment */
+            flex-wrap: nowrap; /* Prevent wrapping in capture mode */
+            justify-content: flex-start; /* Align to start when wide */
+            gap: 30px !important; /* Larger gap for wide layout */
+            margin-bottom: 20px;
         }
         .ready-for-capture .summary-info-item {
-            flex-direction: row; /* จัดชื่อ-สกุล ชั้น เลขที่ ให้อยู่ในบรรทัดเดียวกัน */
-            gap: 10px;
+            flex-direction: row !important; /* Arrange label and value horizontally */
+            align-items: center;
+            gap: 10px !important; /* Gap between label and value */
         }
-
+        .ready-for-capture .summary-info-item span {
+            display: inline-block !important; /* Make spans inline for row layout */
+        }
+        .ready-for-capture .columns-2 {
+            column-count: 2;
+            column-gap: 2rem;
+        }
+        .ready-for-capture .break-inside-avoid {
+            break-inside: avoid-column;
+        }
+        .ready-for-capture .whitespace-pre-wrap {
+            white-space: pre-wrap;
+        }
     </style>
 </head>
-<body class="bg-cyan-50 font-sans p-4 md:p-8">
+<body class="bg-blue-50 font-sans p-4 md:p-8">
 
     <div class="max-w-3xl mx-auto">
 
-        <div class="flex justify-between items-center mb-6 bg-white p-3 rounded-2xl shadow-lg">
-            <div id="step-1-indicator" class="step-indicator flex-1 text-center p-3 rounded-xl">
+        <div class="flex justify-between items-center mb-6 bg-white p-3 rounded-xl shadow-lg">
+            <div id="step-1-indicator" class="step-indicator flex-1 text-center p-3 rounded-xl active-step">
                 <span class="font-bold text-sm md:text-base">1. 🧑‍🏫 กรอกข้อมูล</span>
             </div>
-            <div class="text-gray-300 mx-2">→</div>
+            <div class="text-gray-400 mx-2">→</div>
             <div id="step-2-indicator" class="step-indicator flex-1 text-center p-3 rounded-xl">
                 <span class="font-bold text-sm md:text-base">2. 📝 ทำใบงาน</span>
             </div>
-            <div class="text-gray-300 mx-2">→</div>
+            <div class="text-gray-400 mx-2">→</div>
             <div id="step-3-indicator" class="step-indicator flex-1 text-center p-3 rounded-xl">
                 <span class="font-bold text-sm md:text-base">3. 📥 สรุปผล</span>
             </div>
         </div>
 
-        <div id="page-1" class="page bg-white p-6 md:p-8 rounded-2xl shadow-xl">
-            <h1 class="text-3xl font-bold text-cyan-700 mb-2">ใบงานที่ 1.1</h1>
-            <p class="text-xl text-gray-600 mb-6">เรื่อง: เหตุการณ์สำคัญตามลำดับกาลเวลา</p>
+        <div id="page-1" class="page container-base active">
+            <h1 class="text-3xl font-bold text-primary-color mb-2">ใบงานที่ 1.1</h1>
+            <p class="text-xl text-light-text-color mb-6">เรื่อง: เหตุการณ์สำคัญตามลำดับกาลเวลา</p>
             
-            <p class="text-lg text-gray-500 mb-6">สวัสดีนักเรียน! 🤩 ก่อนเริ่มทำใบงาน กรอกข้อมูลให้ครบก่อนนะ</p>
+            <p class="text-lg text-light-text-color mb-6">สวัสดีนักเรียน! 🤩 ก่อนเริ่มทำใบงาน กรอกข้อมูลให้ครบก่อนนะ</p>
 
-            <div class="bg-cyan-50 border-l-4 border-cyan-500 p-4 rounded-md mb-6 space-y-3">
-                <h2 class="font-bold text-cyan-800">ส่วนที่ 1: ลำดับเวลาวิวัฒนาการดนตรีไทย</h2>
-                <p class="text-sm text-cyan-700">
+            <div class="bg-secondary-color bg-opacity-10 border-l-4 border-secondary-color p-4 rounded-md mb-6 space-y-3">
+                <h2 class="font-bold text-primary-color">ส่วนที่ 1: ลำดับเวลาวิวัฒนาการดนตรีไทย</h2>
+                <p class="text-sm text-text-color">
                     คำชี้แจง: ให้นักเรียนสืบค้นข้อมูลเกี่ยวกับ ลักษณะเด่นของดนตรีไทย ในแต่ละยุคสมัย
                 </p>
-                <hr class="border-cyan-200">
-                <h2 class="font-bold text-cyan-800">ส่วนที่ 2: ทดสอบความเข้าใจ (10 คะแนน)</h2>
-                <p class="text-sm text-cyan-700">
+                <hr class="border-secondary-color border-opacity-30">
+                <h2 class="font-bold text-primary-color">ส่วนที่ 2: ทดสอบความเข้าใจ (10 คะแนน)</h2>
+                <p class="text-sm text-text-color">
                     คำชี้แจง: ให้นักเรียนจับคู่ 'เหตุการณ์' กับ 'ยุคสมัย' ที่เกิดขึ้นให้ถูกต้องที่สุด
                 </p>
             </div>
 
             <form id="info-form" class="space-y-4">
                 <div>
-                    <label for="student-name" class="block text-sm font-medium text-gray-700 mb-1">ชื่อ-นามสกุล <span class="text-red-500">*</span></label>
-                    <input type="text" id="student-name" class="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-cyan-500 focus:border-cyan-500 invalid:border-red-500 invalid:ring-red-500" placeholder="เช่น เด็กชายสมศักดิ์ รักดนตรี" required>
+                    <label for="student-name" class="block text-sm font-medium text-text-color mb-1">ชื่อ-นามสกุล <span class="text-error-red">*</span></label>
+                    <input type="text" id="student-name" class="w-full" placeholder="เช่น เด็กชายสมศักดิ์ รักดนตรี" required>
                 </div>
                 <div>
-                    <label for="student-class" class="block text-sm font-medium text-gray-700 mb-1">ชั้น <span class="text-red-500">*</span></label>
-                    <input type="text" id="student-class" class="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-cyan-500 focus:border-cyan-500 invalid:border-red-500 invalid:ring-red-500" placeholder="เช่น ม.1/1" required>
+                    <label for="student-class" class="block text-sm font-medium text-text-color mb-1">ชั้น <span class="text-error-red">*</span></label>
+                    <input type="text" id="student-class" class="w-full" placeholder="เช่น ม.1/1" required>
                 </div>
                 <div>
-                    <label for="student-number" class="block text-sm font-medium text-gray-700 mb-1">เลขที่ <span class="text-red-500">*</span></label>
-                    <input type="number" id="student-number" class="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-cyan-500 focus:border-cyan-500 invalid:border-red-500 invalid:ring-red-500" placeholder="เช่น 99" required>
+                    <label for="student-number" class="block text-sm font-medium text-text-color mb-1">เลขที่ <span class="text-error-red">*</span></label>
+                    <input type="number" id="student-number" class="w-full" placeholder="เช่น 99" required>
                 </div>
 
-                <button id="btn-to-page-2" type="submit" class="w-full bg-cyan-500 text-white font-bold py-3 px-4 rounded-lg shadow-md hover:bg-cyan-600 transition duration-300 text-lg">
-                    ถัดไป ➡️
+                <button id="btn-to-page-2" type="submit" class="w-full btn-primary">
+                    ถัดไป <i class="fas fa-arrow-right"></i>
                 </button>
             </form>
         </div>
 
-        <div id="page-2" class="page bg-white p-6 md:p-8 rounded-2xl shadow-xl">
+        <div id="page-2" class="page container-base">
             <form id="worksheet-form" class="space-y-8">
                 
                 <div>
-                    <h1 class="text-3xl font-bold text-cyan-700 mb-2">ส่วนที่ 1: ลำดับเวลาวิวัฒนาการดนตรีไทย</h1>
-                    <p class="text-lg text-gray-600 mb-6">คำชี้แจง: ให้นักเรียนสืบค้นข้อมูลเกี่ยวกับ ลักษณะเด่นของดนตรีไทย ในแต่ละยุคสมัย</p>
+                    <h1 class="text-3xl font-bold text-primary-color mb-2">ส่วนที่ 1: ลำดับเวลาวิวัฒนาการดนตรีไทย</h1>
+                    <p class="text-lg text-light-text-color mb-6">คำชี้แจง: ให้นักเรียนสืบค้นข้อมูลเกี่ยวกับ ลักษณะเด่นของดนตรีไทย ในแต่ละยุคสมัย</p>
                     
                     <div class="space-y-6">
                         <div>
-                            <label for="ans-1" class="block text-xl font-semibold text-gray-800 mb-2">1. สมัยสุโขทัย <span class="text-red-500">*</span></label>
-                            <textarea id="ans-1" class="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-cyan-500 focus:border-cyan-500 invalid:border-red-500 invalid:ring-red-500" placeholder="ลักษณะเด่นของดนตรีไทยในสมัยสุโขทัย..." required></textarea>
+                            <label for="ans-1" class="block text-xl font-semibold text-text-color mb-2">1. สมัยสุโขทัย <span class="text-error-red">*</span></label>
+                            <textarea id="ans-1" class="w-full" placeholder="ลักษณะเด่นของดนตรีไทยในสมัยสุโขทัย..." required></textarea>
                         </div>
                         <div>
-                            <label for="ans-2" class="block text-xl font-semibold text-gray-800 mb-2">2. สมัยอยุธยา <span class="text-red-500">*</span></label>
-                            <textarea id="ans-2" class="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-cyan-500 focus:border-cyan-500 invalid:border-red-500 invalid:ring-red-500" placeholder="ลักษณะเด่นของดนตรีไทยในสมัยอยุธยา..." required></textarea>
+                            <label for="ans-2" class="block text-xl font-semibold text-text-color mb-2">2. สมัยอยุธยา <span class="text-error-red">*</span></label>
+                            <textarea id="ans-2" class="w-full" placeholder="ลักษณะเด่นของดนตรีไทยในสมัยอยุธยา..." required></textarea>
                         </div>
                         <div>
-                            <label for="ans-3" class="block text-xl font-semibold text-gray-800 mb-2">3. สมัยธนบุรี <span class="text-red-500">*</span></label>
-                            <textarea id="ans-3" class="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-cyan-500 focus:border-cyan-500 invalid:border-red-500 invalid:ring-red-500" placeholder="ลักษณะเด่นของดนตรีไทยในสมัยธนบุรี..." required></textarea>
+                            <label for="ans-3" class="block text-xl font-semibold text-text-color mb-2">3. สมัยธนบุรี <span class="text-error-red">*</span></label>
+                            <textarea id="ans-3" class="w-full" placeholder="ลักษณะเด่นของดนตรีไทยในสมัยธนบุรี..." required></textarea>
                         </div>
                         <div>
-                            <label for="ans-4" class="block text-xl font-semibold text-gray-800 mb-2">4. สมัยรัตนโกสินทร์ <span class="text-red-500">*</span></label>
-                            <textarea id="ans-4" class="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-cyan-500 focus:border-cyan-500 invalid:border-red-500 invalid:ring-red-500" placeholder="ลักษณะเด่นของดนตรีไทยในสมัยรัตนโกสินทร์..." required></textarea>
+                            <label for="ans-4" class="block text-xl font-semibold text-text-color mb-2">4. สมัยรัตนโกสินทร์ <span class="text-error-red">*</span></label>
+                            <textarea id="ans-4" class="w-full" placeholder="ลักษณะเด่นของดนตรีไทยในสมัยรัตนโกสินทร์..." required></textarea>
                         </div>
                     </div>
                 </div>
@@ -124,13 +285,13 @@
                 <hr class="border-t-2 border-dashed border-gray-300 my-8">
 
                 <div>
-                    <h1 class="text-3xl font-bold text-cyan-700 mb-2">ส่วนที่ 2: ทดสอบความเข้าใจ (10 คะแนน)</h1>
-                    <p class="text-lg text-gray-600 mb-6">คำชี้แจง: ให้นักเรียนจับคู่ 'เหตุการณ์' กับ 'ยุคสมัย' ให้ถูกต้อง</p>
+                    <h1 class="text-3xl font-bold text-primary-color mb-2">ส่วนที่ 2: ทดสอบความเข้าใจ (10 คะแนน)</h1>
+                    <p class="text-lg text-light-text-color mb-6">คำชี้แจง: ให้นักเรียนจับคู่ 'เหตุการณ์' กับ 'ยุคสมัย' ให้ถูกต้อง</p>
 
                     <div class="space-y-6">
                         <div class="flex flex-col md:flex-row items-center gap-4">
-                            <label for="match-1" class="flex-1 text-base font-medium text-gray-800">1. ยุคแห่งการฟื้นฟู รวบรวมศิลปินและตำราดนตรีหลังสงคราม <span class="text-red-500">*</span></label>
-                            <select id="match-1" class="w-full md:w-52 p-3 border border-gray-300 rounded-md shadow-sm focus:ring-cyan-500 focus:border-cyan-500 invalid:border-red-500 invalid:ring-red-500" required>
+                            <label for="match-1" class="flex-1 text-base font-medium text-text-color">1. ยุคแห่งการฟื้นฟู รวบรวมศิลปินและตำราดนตรีหลังสงคราม <span class="text-error-red">*</span></label>
+                            <select id="match-1" class="w-full md:w-52" required>
                                 <option value="">-- เลือกยุคสมัย --</option>
                                 <option value="สุโขทัย">สุโขทัย</option>
                                 <option value="อยุธยา">อยุธยา</option>
@@ -139,8 +300,8 @@
                             </select>
                         </div>
                         <div class="flex flex-col md:flex-row items-center gap-4">
-                            <label for="match-2" class="flex-1 text-base font-medium text-gray-800">2. กำเนิด 'ละครดึกดำบรรพ์' ที่มีแบบแผนการแสดงและดนตรีเฉพาะ <span class="text-red-500">*</span></label>
-                            <select id="match-2" class="w-full md:w-52 p-3 border border-gray-300 rounded-md shadow-sm focus:ring-cyan-500 focus:border-cyan-500 invalid:border-red-500 invalid:ring-red-500" required>
+                            <label for="match-2" class="flex-1 text-base font-medium text-text-color">2. กำเนิด 'ละครดึกดำบรรพ์' ที่มีแบบแผนการแสดงและดนตรีเฉพาะ <span class="text-error-red">*</span></label>
+                            <select id="match-2" class="w-full md:w-52" required>
                                 <option value="">-- เลือกยุคสมัย --</option>
                                 <option value="สุโขทัย">สุโขทัย</option>
                                 <option value="อยุธยา">อยุธยา</option>
@@ -149,8 +310,8 @@
                             </select>
                         </div>
                         <div class="flex flex-col md:flex-row items-center gap-4">
-                            <label for="match-3" class="flex-1 text-base font-medium text-gray-800">3. ปรากฏหลักฐาน 'วงขับไม้' ในศิลาจารึก <span class="text-red-500">*</span></label>
-                            <select id="match-3" class="w-full md:w-52 p-3 border border-gray-300 rounded-md shadow-sm focus:ring-cyan-500 focus:border-cyan-500 invalid:border-red-500 invalid:ring-red-500" required>
+                            <label for="match-3" class="flex-1 text-base font-medium text-text-color">3. ปรากฏหลักฐาน 'วงขับไม้' ในศิลาจารึก <span class="text-error-red">*</span></label>
+                            <select id="match-3" class="w-full md:w-52" required>
                                 <option value="">-- เลือกยุคสมัย --</option>
                                 <option value="สุโขทัย">สุโขทัย</option>
                                 <option value="อยุธยา">อยุธยา</option>
@@ -159,8 +320,8 @@
                             </select>
                         </div>
                         <div class="flex flex-col md:flex-row items-center gap-4">
-                            <label for="match-4" class="flex-1 text-base font-medium text-gray-800">4. พัฒนา 'วงปี่พาทย์เครื่องคู่' และ 'วงปี่พาทย์เครื่องใหญ่' <span class="text-red-500">*</span></label>
-                            <select id="match-4" class="w-full md:w-52 p-3 border border-gray-300 rounded-md shadow-sm focus:ring-cyan-500 focus:border-cyan-500 invalid:border-red-500 invalid:ring-red-500" required>
+                            <label for="match-4" class="flex-1 text-base font-medium text-text-color">4. พัฒนา 'วงปี่พาทย์เครื่องคู่' และ 'วงปี่พาทย์เครื่องใหญ่' <span class="text-error-red">*</span></label>
+                            <select id="match-4" class="w-full md:w-52" required>
                                 <option value="">-- เลือกยุคสมัย --</option>
                                 <option value="สุโขทัย">สุโขทัย</option>
                                 <option value="อยุธยา">อยุธยา</option>
@@ -169,8 +330,8 @@
                             </select>
                         </div>
                         <div class="flex flex-col md:flex-row items-center gap-4">
-                            <label for="match-5" class="flex-1 text-base font-medium text-gray-800">5. มีการตรา 'กฎมณเทียรบาล' ที่มีข้อห้ามเกี่ยวกับการเล่นดนตรี <span class="text-red-500">*</span></label>
-                            <select id="match-5" class="w-full md:w-52 p-3 border border-gray-300 rounded-md shadow-sm focus:ring-cyan-500 focus:border-cyan-500 invalid:border-red-500 invalid:ring-red-500" required>
+                            <label for="match-5" class="flex-1 text-base font-medium text-text-color">5. มีการตรา 'กฎมณเทียรบาล' ที่มีข้อห้ามเกี่ยวกับการเล่นดนตรี <span class="text-error-red">*</span></label>
+                            <select id="match-5" class="w-full md:w-52" required>
                                 <option value="">-- เลือกยุคสมัย --</option>
                                 <option value="สุโขทัย">สุโขทัย</option>
                                 <option value="อยุธยา">อยุธยา</option>
@@ -181,123 +342,123 @@
                     </div>
                 </div>
 
-                <button id="btn-to-page-3" type="submit" class="w-full bg-emerald-500 text-white font-bold py-3 px-4 rounded-lg shadow-md hover:bg-emerald-600 transition duration-300 text-lg">
-                    ส่งคำตอบและสรุปผล 📤
+                <button id="btn-to-page-3" type="submit" class="w-full btn-success">
+                    ส่งคำตอบและสรุปผล <i class="fas fa-paper-plane"></i>
                 </button>
             </form>
         </div>
 
-        <div id="page-3" class="page bg-white p-6 md:p-8 rounded-2xl shadow-xl">
-            <h1 class="text-3xl font-bold text-cyan-700 mb-4">✨ สรุปผลการทำใบงาน</h1>
+        <div id="page-3" class="page container-base">
+            <h1 class="text-3xl font-bold text-primary-color mb-4">✨ สรุปผลการทำใบงาน</h1>
             
-            <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 p-4 rounded-md mb-6" role="alert">
+            <div class="alert-box mb-6" role="alert">
                 <p class="font-bold">ขั้นตอนสุดท้าย!</p>
                 <p>ตรวจสอบข้อมูลให้ถูกต้อง แล้วกดปุ่ม "ดาวน์โหลดรูปภาพสรุปผล" เพื่อบันทึกและส่งครู</p>
             </div>
 
-            <div id="summary-content" class="bg-white rounded-lg shadow-lg p-6 md:p-8 border border-gray-100">
+            <div id="summary-content" class="container-base shadow-none p-6 border border-gray-200">
                 
-                <h2 class="text-3xl font-bold text-center text-cyan-700 mb-2">ใบสรุปผลงาน</h2>
-                <p class="text-lg text-center text-gray-600 mb-6">เรื่อง: เหตุการณ์สำคัญตามลำดับกาลเวลา</p>
+                <h2 class="text-3xl font-bold text-center text-primary-color mb-2">ใบสรุปผลงาน</h2>
+                <p class="text-lg text-center text-light-text-color mb-6">เรื่อง: เหตุการณ์สำคัญตามลำดับกาลเวลา</p>
                 
-                <h3 class="text-2xl font-semibold text-gray-800 mb-4 pb-2 border-b-2 border-cyan-100">ข้อมูลนักเรียน</h3>
+                <h3 class="text-2xl font-semibold text-text-color mb-4 pb-2 border-b-2 border-secondary-color border-opacity-30">ข้อมูลนักเรียน</h3>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-lg mb-6 summary-info-wrapper">
-                    <div class="summary-info-item">
-                        <span class="text-gray-500 block text-sm">ชื่อ-นามสกุล:</span>
-                        <span id="summary-name" class="font-semibold text-gray-900"></span>
+                    <div class="summary-info-item flex flex-col items-start">
+                        <span class="text-light-text-color text-sm">ชื่อ-นามสกุล:</span>
+                        <span id="summary-name" class="font-semibold text-text-color"></span>
                     </div>
-                    <div class="summary-info-item">
-                        <span class="text-gray-500 block text-sm">ชั้น:</span>
-                        <span id="summary-class" class="font-semibold text-gray-900"></span>
+                    <div class="summary-info-item flex flex-col items-start">
+                        <span class="text-light-text-color text-sm">ชั้น:</span>
+                        <span id="summary-class" class="font-semibold text-text-color"></span>
                     </div>
-                    <div class="summary-info-item">
-                        <span class="text-gray-500 block text-sm">เลขที่:</span>
-                        <span id="summary-number" class="font-semibold text-gray-900"></span>
+                    <div class="summary-info-item flex flex-col items-start">
+                        <span class="text-light-text-color text-sm">เลขที่:</span>
+                        <span id="summary-number" class="font-semibold text-text-color"></span>
                     </div>
                 </div>
 
-                <div class="bg-amber-400 text-amber-900 text-center p-6 rounded-lg my-8">
+                <div class="score-box my-8">
                     <h3 class="text-xl font-semibold mb-2">สรุปคะแนน</h3>
-                    <p class="text-5xl font-bold">
+                    <p class="score-value">
                         <span id="summary-score">0</span> / 10
                     </p>
                 </div>
 
-                <h3 class="text-2xl font-semibold text-gray-800 mb-4 pb-2 border-b-2 border-cyan-100 mt-8">ส่วนที่ 1: คำตอบ (สืบค้น)</h3>
+                <h3 class="text-2xl font-semibold text-text-color mb-4 pb-2 border-b-2 border-secondary-color border-opacity-30 mt-8">ส่วนที่ 1: คำตอบ (สืบค้น)</h3>
                 <div class="columns-2 gap-4 space-y-3"> 
                     
-                    <div class="bg-white rounded-lg shadow-sm p-3 border border-gray-100 break-inside-avoid"> 
-                        <p class="font-bold text-gray-800 text-sm">1. สมัยสุโขทัย:</p>
-                        <p id="summary-ans-1" class="text-gray-700 whitespace-pre-wrap text-xs"></p> 
+                    <div class="bg-white rounded-lg shadow-sm p-3 border border-gray-200 break-inside-avoid"> 
+                        <p class="font-bold text-text-color text-sm">1. สมัยสุโขทัย:</p>
+                        <p id="summary-ans-1" class="text-light-text-color whitespace-pre-wrap text-xs"></p> 
                     </div>
 
-                    <div class="bg-white rounded-lg shadow-sm p-3 border border-gray-100 break-inside-avoid">
-                        <p class="font-bold text-gray-800 text-sm">2. สมัยอยุธยา:</p>
-                        <p id="summary-ans-2" class="text-gray-700 whitespace-pre-wrap text-xs"></p>
+                    <div class="bg-white rounded-lg shadow-sm p-3 border border-gray-200 break-inside-avoid">
+                        <p class="font-bold text-text-color text-sm">2. สมัยอยุธยา:</p>
+                        <p id="summary-ans-2" class="text-light-text-color whitespace-pre-wrap text-xs"></p>
                     </div>
 
-                    <div class="bg-white rounded-lg shadow-sm p-3 border border-gray-100 break-inside-avoid">
-                        <p class="font-bold text-gray-800 text-sm">3. สมัยธนบุรี:</p>
-                        <p id="summary-ans-3" class="text-gray-700 whitespace-pre-wrap text-xs"></p>
+                    <div class="bg-white rounded-lg shadow-sm p-3 border border-gray-200 break-inside-avoid">
+                        <p class="font-bold text-text-color text-sm">3. สมัยธนบุรี:</p>
+                        <p id="summary-ans-3" class="text-light-text-color whitespace-pre-wrap text-xs"></p>
                     </div>
 
-                    <div class="bg-white rounded-lg shadow-sm p-3 border border-gray-100 break-inside-avoid">
-                        <p class="font-bold text-gray-800 text-sm">4. สมัยรัตนโกสินทร์:</p>
-                        <p id="summary-ans-4" class="text-gray-700 whitespace-pre-wrap text-xs"></p>
+                    <div class="bg-white rounded-lg shadow-sm p-3 border border-gray-200 break-inside-avoid">
+                        <p class="font-bold text-text-color text-sm">4. สมัยรัตนโกสินทร์:</p>
+                        <p id="summary-ans-4" class="text-light-text-color whitespace-pre-wrap text-xs"></p>
                     </div>
                 </div>
 
-                <h3 class="text-2xl font-semibold text-gray-800 mb-4 pb-2 border-b-2 border-cyan-100 mt-8">ส่วนที่ 2: ผลการจับคู่</h3>
+                <h3 class="text-2xl font-semibold text-text-color mb-4 pb-2 border-b-2 border-secondary-color border-opacity-30 mt-8">ส่วนที่ 2: ผลการจับคู่</h3>
                 <div class="space-y-3 text-base">
-                    <div class="flex justify-between items-center bg-white rounded-lg shadow-sm p-3 border border-gray-100">
+                    <div class="flex justify-between items-center bg-white rounded-lg shadow-sm p-3 border border-gray-200">
                         <div class="flex items-center">
                             <span id="summary-result-1" class="text-lg w-6"></span> 
-                            <p class="flex-1 text-gray-800">1. ยุคแห่งการฟื้นฟู รวบรวมศิลปิน...</p>
+                            <p class="flex-1 text-text-color">1. ยุคแห่งการฟื้นฟู รวบรวมศิลปิน...</p>
                         </div>
-                        <span id="summary-match-1" class="font-bold font-mono text-cyan-800 w-32 text-right"></span>
+                        <span id="summary-match-1" class="font-bold font-mono text-primary-color w-32 text-right"></span>
                     </div>
-                    <div class="flex justify-between items-center bg-white rounded-lg shadow-sm p-3 border border-gray-100">
+                    <div class="flex justify-between items-center bg-white rounded-lg shadow-sm p-3 border border-gray-200">
                         <div class="flex items-center">
                             <span id="summary-result-2" class="text-lg w-6"></span> 
-                            <p class="flex-1 text-gray-800">2. กำเนิด 'ละครดึกดำบรรพ์'...</p>
+                            <p class="flex-1 text-text-color">2. กำเนิด 'ละครดึกดำบรรพ์'...</p>
                         </div>
-                        <span id="summary-match-2" class="font-bold font-mono text-cyan-800 w-32 text-right"></span>
+                        <span id="summary-match-2" class="font-bold font-mono text-primary-color w-32 text-right"></span>
                     </div>
-                    <div class="flex justify-between items-center bg-white rounded-lg shadow-sm p-3 border border-gray-100">
+                    <div class="flex justify-between items-center bg-white rounded-lg shadow-sm p-3 border border-gray-200">
                         <div class="flex items-center">
                             <span id="summary-result-3" class="text-lg w-6"></span> 
-                            <p class="flex-1 text-gray-800">3. ปรากฏหลักฐาน 'วงขับไม้'...</p>
+                            <p class="flex-1 text-text-color">3. ปรากฏหลักฐาน 'วงขับไม้'...</p>
                         </div>
-                        <span id="summary-match-3" class="font-bold font-mono text-cyan-800 w-32 text-right"></span>
+                        <span id="summary-match-3" class="font-bold font-mono text-primary-color w-32 text-right"></span>
                     </div>
-                    <div class="flex justify-between items-center bg-white rounded-lg shadow-sm p-3 border border-gray-100">
+                    <div class="flex justify-between items-center bg-white rounded-lg shadow-sm p-3 border border-gray-200">
                         <div class="flex items-center">
                             <span id="summary-result-4" class="text-lg w-6"></span> 
-                            <p class="flex-1 text-gray-800">4. พัฒนา 'วงปี่พาทย์เครื่องคู่'...</p>
+                            <p class="flex-1 text-text-color">4. พัฒนา 'วงปี่พาทย์เครื่องคู่'...</p>
                         </div>
-                        <span id="summary-match-4" class="font-bold font-mono text-cyan-800 w-32 text-right"></span>
+                        <span id="summary-match-4" class="font-bold font-mono text-primary-color w-32 text-right"></span>
                     </div>
-                    <div class="flex justify-between items-center bg-white rounded-lg shadow-sm p-3 border border-gray-100">
+                    <div class="flex justify-between items-center bg-white rounded-lg shadow-sm p-3 border border-gray-200">
                         <div class="flex items-center">
                             <span id="summary-result-5" class="text-lg w-6"></span> 
-                            <p class="flex-1 text-gray-800">5. มีการตรา 'กฎมณเทียรบาล'...</p>
+                            <p class="flex-1 text-text-color">5. มีการตรา 'กฎมณเทียรบาล'...</p>
                         </div>
-                        <span id="summary-match-5" class="font-bold font-mono text-cyan-800 w-32 text-right"></span>
+                        <span id="summary-match-5" class="font-bold font-mono text-primary-color w-32 text-right"></span>
                     </div>
                 </div>
 
             </div>
-            <button id="btn-download" class="w-full bg-cyan-500 text-white font-bold py-3 px-4 rounded-lg shadow-md hover:bg-cyan-600 transition duration-300 text-lg mt-6">
-                ดาวน์โหลดรูปภาพสรุปผล 📥
+            <button id="btn-download" class="w-full btn-primary mt-6">
+                ดาวน์โหลดรูปภาพสรุปผล <i class="fas fa-download"></i>
             </button>
 
-            <button id="btn-reset" class="w-full bg-red-500 text-white font-bold py-3 px-4 rounded-lg shadow-md hover:bg-red-600 transition duration-300 text-lg mt-4">
+            <button id="btn-reset" class="w-full btn-danger mt-4">
                 🤯 เริ่มใหม่ทั้งหมด (ลบข้อมูลและกลับไปหน้าแรก)
             </button>
         </div>
 
-        <footer class="text-center p-4 mt-8 bg-white rounded-2xl shadow-lg">
-            <p class="text-sm text-gray-600">พัฒนาระบบโดย: นายสุนทร ฉอมไธสง</p>
+        <footer class="text-center p-4 mt-8 container-base shadow-none">
+            <p class="text-sm text-light-text-color">พัฒนาระบบโดย: นายสุนทร ฉอมไธสง</p>
         </footer>
 
     </div>
@@ -367,12 +528,10 @@
                     pages[pageId].classList.add('active');
                 }
                 Object.values(stepIndicators).forEach(indicator => {
-                    indicator.classList.remove('bg-cyan-500', 'text-white');
-                    indicator.classList.add('bg-gray-100', 'text-gray-700');
+                    indicator.classList.remove('active-step');
                 });
                 if (stepIndicators[pageId]) {
-                    stepIndicators[pageId].classList.add('bg-cyan-500', 'text-white');
-                    stepIndicators[pageId].classList.remove('bg-gray-100', 'text-gray-700');
+                    stepIndicators[pageId].classList.add('active-step');
                 }
                 sessionStorage.setItem('currentPage', pageId);
                 window.scrollTo(0, 0);
@@ -440,10 +599,10 @@
                     if (studentAnswers[i] === answerKey[i]) {
                         score += pointsPerAnswer;
                         resultSpans[i].textContent = correctSymbol;
-                        resultSpans[i].classList.add('text-green-600'); 
+                        resultSpans[i].classList.add('text-accent-green'); 
                     } else {
                         resultSpans[i].textContent = incorrectSymbol;
-                        resultSpans[i].classList.add('text-red-600'); 
+                        resultSpans[i].classList.add('text-error-red'); 
                     }
                 }
 
@@ -495,14 +654,14 @@
 
             // --- 6. html2canvas + Watermark Logic ---
             async function captureAndDownloadWithWatermark() {
-                const elementToCapture = summaryContent; // ใช้ summaryContent แทน printable-summary-section
+                const elementToCapture = summaryContent; 
                 
                 // 1. เพิ่ม class เพื่อปรับขนาดก่อนบันทึกภาพ
                 elementToCapture.classList.add('ready-for-capture');
 
                 try {
                     const canvas = await html2canvas(elementToCapture, {
-                        scale: 1, // ปรับ scale เป็น 1 เพราะเราขยาย width แล้ว
+                        scale: 1, 
                         useCORS: true,
                         backgroundColor: '#ffffff' 
                     });
@@ -519,7 +678,7 @@
                     const watermarkText = `${name} ${sClass} เลขที่ ${sNumber}`;
 
                     const fontSize = 24; 
-                    ctx.font = `bold ${fontSize}px Sarabun, sans-serif`; // เพิ่ม Sarabun
+                    ctx.font = `bold ${fontSize}px Sarabun, sans-serif`; 
                     ctx.fillStyle = 'rgba(0, 0, 0, 0.1)'; 
                     
                     const textMetrics = ctx.measureText(watermarkText);
@@ -549,7 +708,7 @@
                     // --- จบส่วนลายน้ำ ---
 
                     const link = document.createElement('a');
-                    link.download = `worksheet_1-1_${name.replace(/\s+/g, '_')}.png`; // ปรับชื่อไฟล์
+                    link.download = `worksheet_1-1_${name.replace(/\s+/g, '_')}.png`; 
                     link.href = canvas.toDataURL('image/png');
                     link.click();
 
