@@ -10,6 +10,32 @@
         .page { display: none; }
         .page.active { display: block; }
         textarea { min-height: 100px; }
+        /* NEW: Styles for the print/image-ready version */
+        /* เพิ่มสไตล์สำหรับตอนที่จะบันทึกภาพโดยเฉพาะ */        
+        .ready-for-capture {            
+            width: 1000px !important;            
+            padding: 50px !important;            
+            box-shadow: none !important; /* ลบเงาออกเพื่อภาพที่สะอาด */
+            /* เพิ่มความจัดเรียงข้อความให้ดีขึ้นเมื่อเป็น 1000px */
+            text-align: left !important;
+        }
+        /* ปรับขนาด font เล็กน้อยในส่วนสรุปเวลาอยู่ในโหมด ready-for-capture */
+        .ready-for-capture #summary-content h2,
+        .ready-for-capture #summary-content p,
+        .ready-for-capture #summary-content h3,
+        .ready-for-capture #summary-content span,
+        .ready-for-capture #summary-content div {
+            font-size: 0.9em; /* ลดขนาด font ลงเล็กน้อย */
+        }
+        .ready-for-capture .summary-info-wrapper {
+            justify-content: flex-start; /* จัดชิดซ้ายเมื่อกว้างขึ้น */
+            gap: 20px;
+        }
+        .ready-for-capture .summary-info-item {
+            flex-direction: row; /* จัดชื่อ-สกุล ชั้น เลขที่ ให้อยู่ในบรรทัดเดียวกัน */
+            gap: 10px;
+        }
+
     </style>
 </head>
 <body class="bg-cyan-50 font-sans p-4 md:p-8">
@@ -175,17 +201,17 @@
                 <p class="text-lg text-center text-gray-600 mb-6">เรื่อง: เหตุการณ์สำคัญตามลำดับกาลเวลา</p>
                 
                 <h3 class="text-2xl font-semibold text-gray-800 mb-4 pb-2 border-b-2 border-cyan-100">ข้อมูลนักเรียน</h3>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-lg mb-6">
-                    <div>
-                        <span class="text-gray-500 block text-sm">ชื่อ-นามสกุล</span>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-lg mb-6 summary-info-wrapper">
+                    <div class="summary-info-item">
+                        <span class="text-gray-500 block text-sm">ชื่อ-นามสกุล:</span>
                         <span id="summary-name" class="font-semibold text-gray-900"></span>
                     </div>
-                    <div>
-                        <span class="text-gray-500 block text-sm">ชั้น</span>
+                    <div class="summary-info-item">
+                        <span class="text-gray-500 block text-sm">ชั้น:</span>
                         <span id="summary-class" class="font-semibold text-gray-900"></span>
                     </div>
-                    <div>
-                        <span class="text-gray-500 block text-sm">เลขที่</span>
+                    <div class="summary-info-item">
+                        <span class="text-gray-500 block text-sm">เลขที่:</span>
                         <span id="summary-number" class="font-semibold text-gray-900"></span>
                     </div>
                 </div>
@@ -331,6 +357,8 @@
             const summaryResult4 = document.getElementById('summary-result-4');
             const summaryResult5 = document.getElementById('summary-result-5');
 
+            const summaryContent = document.getElementById('summary-content');
+
 
             // --- 2. Page Navigation ---
             function showPage(pageId) {
@@ -467,14 +495,20 @@
 
             // --- 6. html2canvas + Watermark Logic ---
             async function captureAndDownloadWithWatermark() {
-                const elementToCapture = document.getElementById('summary-content');
+                const elementToCapture = summaryContent; // ใช้ summaryContent แทน printable-summary-section
+                
+                // 1. เพิ่ม class เพื่อปรับขนาดก่อนบันทึกภาพ
+                elementToCapture.classList.add('ready-for-capture');
 
                 try {
                     const canvas = await html2canvas(elementToCapture, {
-                        scale: 2, 
+                        scale: 1, // ปรับ scale เป็น 1 เพราะเราขยาย width แล้ว
                         useCORS: true,
                         backgroundColor: '#ffffff' 
                     });
+
+                    // 2. ลบ class ออกทันทีหลังจากที่ html2canvas ประมวลผลเสร็จ
+                    elementToCapture.classList.remove('ready-for-capture');
 
                     // --- วาดลายน้ำ ---
                     const ctx = canvas.getContext('2d');
@@ -485,7 +519,7 @@
                     const watermarkText = `${name} ${sClass} เลขที่ ${sNumber}`;
 
                     const fontSize = 24; 
-                    ctx.font = `bold ${fontSize}px sans-serif`;
+                    ctx.font = `bold ${fontSize}px Sarabun, sans-serif`; // เพิ่ม Sarabun
                     ctx.fillStyle = 'rgba(0, 0, 0, 0.1)'; 
                     
                     const textMetrics = ctx.measureText(watermarkText);
@@ -515,7 +549,7 @@
                     // --- จบส่วนลายน้ำ ---
 
                     const link = document.createElement('a');
-                    link.download = `worksheet_${name.replace(/\s+/g, '_')}.png`;
+                    link.download = `worksheet_1-1_${name.replace(/\s+/g, '_')}.png`; // ปรับชื่อไฟล์
                     link.href = canvas.toDataURL('image/png');
                     link.click();
 
